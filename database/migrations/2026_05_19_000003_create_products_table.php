@@ -5,16 +5,27 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void
+   public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string('sku')->unique(); // BARU: Kode unik barang
             $table->string('name');
-            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
+            
+            // Punya kamu (pertahankan!)
+            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete(); 
+            
+            $table->integer('price')->default(0); // BARU: Harga barang
             $table->integer('stock')->default(0);
             $table->integer('min_stock')->default(10);
+            
+            $table->string('image')->nullable(); // BARU: Untuk fitur Galeri/Upload Gambar
+            $table->text('description')->nullable(); // BARU: Keterangan produk
+            
             $table->timestamps();
-            $table->index(['category_id', 'stock']);
+            
+            // Punya kamu (pertahankan, bagus untuk optimasi!)
+            $table->index(['category_id', 'stock']); 
         });
     }
 

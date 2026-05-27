@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('role')->default('admin');
+            $table->timestamp('email_verified_at')->nullable();
+            $table->rememberToken();
+            $table->enum('role', ['admin', 'manajer', 'staf', 'viewer'])->default('viewer');
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('table_users');
+        Schema::dropIfExists('users');
     }
 };

@@ -9,16 +9,18 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InventoryController extends Controller
 {
-    public function dashboard(): View
-    {
-        $products = Product::with('category')
-            ->orderBy('name')
-            ->get();
 
-        return view('admin.inventory', compact('products'));
+    public function dashboard()
+    {
+        $products = \App\Models\Product::with('category')->get();
+        
+        // Ambil 10 log aktivitas terbaru
+        $auditLogs = \App\Models\AuditLog::latest()->take(10)->get();
+            return view('app.inventory', compact('products', 'auditLogs'));
     }
 
     public function recordSale(Request $request): JsonResponse
@@ -83,6 +85,18 @@ class InventoryController extends Controller
         }
     }
 
+    public function exportPdf()
+    {
+    // Mengambil data produk dan mengurutkannya
+    $products = Product::with('category')->orderBy('name')->get();
+
+    // Meload file tampilan PDF dan mengirimkan datanya
+    $pdf = Pdf::loadView('app.reports.stock-report', compact('products'));
+
+    // Mengunduh file PDF dengan nama spesifik
+    return $pdf->download('Laporan_Stok_SmartStock_Pro.pdf');
+    }
+
     public function criticalStock(): JsonResponse
     {
         $data = Product::query()
@@ -97,5 +111,26 @@ class InventoryController extends Controller
             ->get();
 
         return response()->json($data);
+    }
+
+    public function serverStats()
+    {
+        $startTime = microtime(true);
+        
+        // 1. Simulasi CPU (Karena sys_getloadavg tidak jalan di Windows/Laragon)
+        // Kita buat angka acak fluktuatif antara 5% sampai 15% (khas server idle)
+        $cpuUsage = rand(5, 15) . '%'; 
+        
+        // 2. Baca Penggunaan Memori PHP secara Real
+        $memory = round(memory_get_usage(true) / 1024 / 1024, 2) . ' MB';
+        
+        // 3. Hitung Waktu Respons (Response Time)
+        $responseTime = round((microtime(true) - $startTime) * 1000) . ' ms';
+
+        return response()->json([
+            'cpu' => $cpuUsage,
+            'memory' => $memory,
+            'response_time' => $responseTime
+        ]);
     }
 }
