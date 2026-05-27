@@ -16,7 +16,7 @@
 
     <aside class="w-64 bg-slate-900 text-white flex flex-col transition-all duration-300">
         <div class="p-6 border-b border-slate-800 flex flex-col justify-center">
-            <h1 class="text-xl font-bold tracking-wider text-blue-400">SMART<span class="text-white">STOCK</span></h1>
+            <h1 class="text-xl font-bold tracking-wider text-blue-400">SMART<span class="text-white">STOCK PRO</span></h1>
             <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest">PT Maju Bersama Digital</p>
         </div>
         

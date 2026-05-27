@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -58,24 +61,49 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Product $product)
     {
-        //
+        $categories = Category::all();
+        return view('app.products.edit', compact('product', 'categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Product $product)
     {
-        //
+        $validated = $request->validate([
+            'sku' => 'required|unique:products,sku,' . $product->id, // Biarkan SKU lama tetap bisa disimpan
+            'name' => 'required',
+            'category_id' => 'required',
+            'price' => 'required|numeric',
+            'stock' => 'required|numeric',
+            'image' => 'image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            // Hapus foto lama jika ada
+            if ($product->image) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
+            }
+            $validated['image'] = $request->file('image')->store('products', 'public');
+        }
+
+        $product->update($validated);
+        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Product $product)
     {
-        //
+        // Hapus foto jika ada
+        if ($product->image) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
+        }
+        
+        // Hapus data dari database
+        $product->delete();
+        
+        // REDIRECT adalah kunci agar tidak layar putih
+        return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus!');
     }
 }

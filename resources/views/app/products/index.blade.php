@@ -21,7 +21,7 @@
             {{ session('success') }}
         </div>
     @endif
-    
+
     <div x-show="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @forelse($products as $product)
         <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg transition">
@@ -32,6 +32,13 @@
             <div class="flex justify-between mt-2 mb-4">
                 <span class="text-blue-600 font-semibold text-sm">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                 <span class="text-xs bg-slate-100 px-2 py-1 rounded">Stok: {{ $product->stock }}</span>
+            </div>
+            <div class="mt-4 flex gap-2">
+                <a href="{{ route('products.edit', $product->id) }}" class="flex-1 bg-amber-500 text-white text-center py-1 rounded text-xs hover:bg-amber-600">Edit</a>
+                <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="flex-1">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="w-full bg-red-500 text-white py-1 rounded text-xs hover:bg-red-600" onclick="return confirm('Yakin hapus?')">Hapus</button>
+                </form>
             </div>
         </div>
         @empty <p class="text-center col-span-full">Belum ada produk.</p> @endforelse
@@ -45,6 +52,7 @@
                     <th class="px-4 py-3">Nama</th>
                     <th class="px-4 py-3">Harga</th>
                     <th class="px-4 py-3">Stok</th>
+                    <th class="px-4 py-3">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -54,6 +62,13 @@
                     <td class="px-4 py-3">{{ $product->name }}</td>
                     <td class="px-4 py-3">Rp {{ number_format($product->price, 0, ',', '.') }}</td>
                     <td class="px-4 py-3">{{ $product->stock }}</td>
+                    <td class="px-4 py-3">
+                        <a href="{{ route('products.edit', $product->id) }}" class="text-amber-600 hover:underline">Edit</a>
+                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="inline">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="text-red-600 hover:underline" onclick="return confirm('Yakin?')">Hapus</button>
+                        </form>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

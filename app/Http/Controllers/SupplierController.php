@@ -9,9 +9,9 @@ class SupplierController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
+    public function index() {
+    $suppliers = \App\Models\Supplier::latest()->paginate(10);
+    return view('app.suppliers.index', compact('suppliers'));
     }
 
     /**

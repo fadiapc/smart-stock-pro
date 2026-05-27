@@ -15,7 +15,7 @@
 </head>
 <body>
     <div class="header">
-           <h1 style="color: #2563eb; margin-bottom: 5px;">SMARTSTOCK</h1>
+           <h1 style="color: #2563eb; margin-bottom: 5px;">SMARTSTOCK PRO</h1>
            <h3 style="margin: 0; color: #475569;">PT Maju Bersama Digital</h3>
            <p style="margin-top: 10px; color: #64748b;">Laporan Stok Inventaris Real-Time</p>
            <p><small>Dicetak pada: {{ date('d-m-Y H:i:s') }} WIB</small></p>
